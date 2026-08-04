@@ -1,0 +1,56 @@
+name: Build dbt binary
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * SUN' # run 00:00 every Sunday (for security patches)
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-musl
+          - aarch64-unknown-linux-musl
+        profile:
+          - release
+    
+    steps:
+
+      - name: Set up rust
+        run: |
+          rustup --version
+          rustup target add ${{ matrix.target }}
+
+      - name: Install MUSL
+        if: endsWith(matrix.target, '-musl')
+        run: sudo apt-get install -y musl musl-dev
+      
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build binary
+        run: cargo build --profile ${{ matrix.profile }} --target ${{ matrix.target }}
+ 
+      - name: Run tests
+        run: cargo test --profile ${{ matrix.profile }} --target ${{ matrix.target }}
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt
+          path: target/{{ matrix.profile }}/dbt
