@@ -23,14 +23,15 @@ jobs:
     
     steps:
 
+      - name: Install dependencies
+        run: sudo apt-get install -y protobuf-compiler
+
       - name: Install MUSL
         if: endsWith(matrix.target, '-musl')
         run: sudo apt-get install -y musl musl-dev
 
       - name: Set up rust
-        run: |
-          rustup --version
-          rustup target add ${{ matrix.target }}
+        run: rustup --version && rustup target add ${{ matrix.target }}
       
       - name: Checkout repository
         uses: actions/checkout@v7
