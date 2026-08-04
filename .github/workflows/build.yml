@@ -13,6 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         target:
           - x86_64-unknown-linux-musl
@@ -22,14 +23,14 @@ jobs:
     
     steps:
 
+      - name: Install MUSL
+        if: endsWith(matrix.target, '-musl')
+        run: sudo apt-get install -y musl musl-dev
+
       - name: Set up rust
         run: |
           rustup --version
           rustup target add ${{ matrix.target }}
-
-      - name: Install MUSL
-        if: endsWith(matrix.target, '-musl')
-        run: sudo apt-get install -y musl musl-dev
       
       - name: Checkout repository
         uses: actions/checkout@v7
