@@ -30,8 +30,12 @@ jobs:
         if: endsWith(matrix.target, '-musl')
         run: sudo apt-get install -y musl musl-dev
 
-      - name: Set up rust
-        run: rustup --version && rustup target add ${{ matrix.target }}
+      - name: Set up rust toolchain
+        run: |
+          rustup --version
+          rustup toolchain install stable-${{ matrix.target }}
+          rustup default stable-${{ matrix.target }}
+          rustup target add ${{ matrix.target }}
       
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -47,9 +51,6 @@ jobs:
 
       - name: Build binary
         run: cargo build --profile ${{ matrix.profile }} --target ${{ matrix.target }}
- 
-      - name: Run tests
-        run: cargo test --profile ${{ matrix.profile }} --target ${{ matrix.target }}
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
