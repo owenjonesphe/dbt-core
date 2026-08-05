@@ -33,9 +33,7 @@ jobs:
       - name: Set up rust toolchain
         run: |
           rustup --version
-          rustup toolchain install stable-${{ matrix.target }}
-          rustup default stable-${{ matrix.target }}
-          rustup target add ${{ matrix.target }}
+          rustup -v target add ${{ matrix.target }}
       
       - name: Checkout repository
         uses: actions/checkout@v7
