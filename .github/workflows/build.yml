@@ -48,13 +48,13 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build binary
-        run: cargo build --profile "${{ matrix.profile }}" --target "${{ matrix.target }}" --bin "dbt"
+        run: cargo build --profile "${{ matrix.profile }}" --target "${{ matrix.target }}" --bin "dbt-sa-cli"
 
       - name: Strip release binary
-        run: strip "target/${{ matrix.target }}/${{ matrix.profile }}/dbt"
+        run: strip "target/${{ matrix.target }}/${{ matrix.profile }}/dbt-sa-cli"
 
       - name: Upload binary
         uses: actions/upload-artifact@v7
         with:
           name: dbt
-          path: "target/${{ matrix.target }}/${{ matrix.profile }}/dbt"
+          path: "target/${{ matrix.target }}/${{ matrix.profile }}/dbt-sa-cli"
