@@ -17,7 +17,7 @@ jobs:
       matrix:
         target:
           - x86_64-unknown-linux-musl
-          - aarch64-unknown-linux-musl
+          #- aarch64-unknown-linux-musl
         profile:
           - release
     
@@ -54,4 +54,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dbt
-          path: target/{{ matrix.profile }}/dbt
+          path: target/${{ matrix.target }}/${{ matrix.profile }}/dbt
